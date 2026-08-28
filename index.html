@@ -18,7 +18,16 @@
     --wedding-date: "Saturday, 12th December 2026";
     --wedding-time: "Ceremony at 11:00 AM";
     --wedding-venue: "Tharavadu Mane, Bangalore";
+
+    /* Paste a Google Maps link here (open Google Maps, search your venue,
+       click "Share" → "Copy link"). Leave empty ("") to hide the button. */
+    --venue-map-url: "https://maps.app.goo.gl/Fd96MLqV4yPAHjRF8";
     --rsvp-by: "RSVP by 6th September 2026";
+
+    /* Used only for the countdown timer's math — must be in this exact
+       format: YYYY-MM-DDTHH:MM:SS (24-hour time). This should match
+       your wedding date/time above. */
+    --wedding-datetime: "2026-12-12T11:00:00";
 
     /* Leave IMAGE-URL empty ("") to show a monogram instead of a photo.
        To use a photo: put the image file in the same folder as this
@@ -137,15 +146,83 @@
     margin: 2px 0;
   }
 
-  .eyebrow {
+  .map-link {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    margin: -12px auto 22px;
+    width: fit-content;
     font-family: var(--body);
-    font-weight: 400;
-    font-size: 10.5px;
-    letter-spacing: 0.22em;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wine);
+    text-decoration: none;
+    border-bottom: 1px solid var(--wine);
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+  .map-link:hover { opacity: 0.7; }
+  .map-link.show { display: inline-flex; }
+  .map-link svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  .countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 6px 0 22px;
+  }
+  .countdown .unit {
+    text-align: center;
+    background: var(--ivory-dim);
+    border: 1px solid rgba(176,141,87,0.4);
+    border-radius: 3px;
+    padding: 10px 4px 8px;
+  }
+  .countdown .num {
+    display: block;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--wine);
+    line-height: 1;
+  }
+  .countdown .lbl {
+    display: block;
+    margin-top: 5px;
+    font-family: var(--body);
+    font-size: 9px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--sage);
+  }
+  .countdown.arrived {
+    grid-template-columns: 1fr;
+  }
+  .countdown.arrived .unit {
+    padding: 14px;
+  }
+  .countdown.arrived .num {
+    font-family: var(--accent-script);
+    font-weight: 400;
+    font-size: 24px;
+  }
+
+  .rsvp-callout {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     text-align: center;
-    margin: 24px 0 4px;
+    color: var(--wine);
+    margin: 4px 0 26px;
+    padding: 12px 14px;
+    border-top: 1px solid rgba(176,141,87,0.45);
+    border-bottom: 1px solid rgba(176,141,87,0.45);
   }
 
   h1.names {
@@ -154,7 +231,7 @@
     font-size: 38px;
     line-height: 1.15;
     text-align: center;
-    margin: 0 0 4px;
+    margin: 24px 0 4px;
     color: var(--ink);
   }
   h1.names .amp {
@@ -341,9 +418,22 @@
       </div>
     </div>
 
-    <div class="eyebrow" id="rsvpByLabel"></div>
     <h1 class="names" id="coupleNames"></h1>
     <p class="details" id="weddingDetails"></p>
+
+    <a class="map-link" id="mapLink" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      View on Map
+    </a>
+
+    <div class="countdown" id="countdown">
+      <div class="unit"><span class="num" id="cdDays">00</span><span class="lbl">Days</span></div>
+      <div class="unit"><span class="num" id="cdHours">00</span><span class="lbl">Hours</span></div>
+      <div class="unit"><span class="num" id="cdMins">00</span><span class="lbl">Mins</span></div>
+      <div class="unit"><span class="num" id="cdSecs">00</span><span class="lbl">Secs</span></div>
+    </div>
+
+    <div class="rsvp-callout" id="rsvpByLabel"></div>
 
     <div class="divider"><span>Kindly Respond</span></div>
 
@@ -405,6 +495,14 @@
   document.getElementById('initials').textContent =
     coupleA.charAt(0).toUpperCase() + '  ' + coupleB.charAt(0).toUpperCase();
 
+  // ---- optional venue map link ----
+  const mapUrl = cssVar('--venue-map-url');
+  if (mapUrl) {
+    const mapLink = document.getElementById('mapLink');
+    mapLink.href = mapUrl;
+    mapLink.classList.add('show');
+  }
+
   // ---- optional couple photo ----
   const imageUrl = cssVar('--image-url');
   if (imageUrl) {
@@ -416,6 +514,39 @@
     arch.innerHTML = '';
     arch.appendChild(img);
   }
+
+  // ---- countdown timer ----
+  const weddingDateTime = new Date(cssVar('--wedding-datetime'));
+  const countdownEl = document.getElementById('countdown');
+
+  function updateCountdown() {
+    const diff = weddingDateTime.getTime() - Date.now();
+
+    if (isNaN(weddingDateTime.getTime())) {
+      countdownEl.style.display = 'none';
+      return;
+    }
+
+    if (diff <= 0) {
+      countdownEl.classList.add('arrived');
+      countdownEl.innerHTML = '<div class="unit"><span class="num">Today\'s the day!</span></div>';
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('cdDays').textContent = days;
+    document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
+    document.getElementById('cdSecs').textContent = String(secs).padStart(2, '0');
+  }
+
+  updateCountdown();
+  const countdownInterval = setInterval(updateCountdown, 1000);
 
   // ---- toggle guest count field ----
   const guestField = document.getElementById('guestField');
