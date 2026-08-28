@@ -125,6 +125,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 50% 30%;
     display: block;
   }
   .monogram {
@@ -166,7 +167,7 @@
     transition: opacity 0.2s;
   }
   .map-link:hover { opacity: 0.7; }
-  .map-link.show { display: inline-flex; }
+  .map-link.show { display: flex; }
   .map-link svg { width: 13px; height: 13px; flex-shrink: 0; }
 
   .countdown {
@@ -397,11 +398,12 @@
     .card { animation: none; opacity: 1; transform: none; }
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 440px) {
     .card { padding: 0 26px 34px; }
     .arch-wrap { padding: 0 14px; }
     .arch { height: 190px; }
-    h1.names { font-size: 32px; }
+    h1.names { font-size: 27px; }
+    h1.names .amp { font-size: 22px; margin: 0 3px; }
   }
 </style>
 </head>
