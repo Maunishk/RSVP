@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding RSVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Parisienne&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     EDIT YOUR WEDDING DETAILS HERE
+     ============================================================ */
+  :root {
+    --couple-a: "Chandana";
+    --couple-b: "Maunish";
+    --wedding-date: "Saturday, 12th December 2026";
+    --wedding-time: "Ceremony at 11:00 AM";
+    --wedding-venue: "Tharavadu Mane, Bangalore";
+    --rsvp-by: "RSVP by 6th September 2026";
+
+    /* Leave IMAGE-URL empty ("") to show a monogram instead of a photo.
+       To use a photo: put the image file in the same folder as this
+       page (e.g. "couple.jpg") and set the value below to that
+       filename, or paste a hosted image URL (e.g. from Imgur). */
+    --image-url: "";
+  }
+
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root {
+    --ivory: #f7f3ec;
+    --ivory-dim: #efe8d9;
+    --ink: #2e2a24;
+    --ink-soft: #4a4438;
+    --gold: #b08d57;
+    --gold-bright: #cba46c;
+    --wine: #6b2737;
+    --wine-dark: #4f1c28;
+    --sage: #7c8768;
+
+    --display: 'Playfair Display', serif;
+    --accent-script: 'Parisienne', cursive;
+    --serif-italic: 'Cormorant Garamond', serif;
+    --body: 'Jost', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(176,141,87,0.10), transparent 42%),
+      radial-gradient(circle at 88% 85%, rgba(124,135,104,0.12), transparent 45%);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height: 100vh;
+  }
+
+  .stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: var(--ivory);
+    border-radius: 4px;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(176,141,87,0.25);
+    padding: 0 44px 44px;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 0.9s cubic-bezier(0.16,1,0.3,1) 0.15s forwards;
+  }
+
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    top: 178px;
+    bottom: 12px;
+    border: 1px solid rgba(176,141,87,0.4);
+    pointer-events: none;
+  }
+
+  /* arch photo / monogram frame */
+  .arch-wrap {
+    width: 100%;
+    padding: 0 30px;
+    margin-top: -1px;
+  }
+  .arch {
+    width: 100%;
+    height: 220px;
+    border-radius: 120px 120px 6px 6px;
+    overflow: hidden;
+    border: 1px solid var(--gold);
+    box-shadow: 0 8px 22px -10px rgba(0,0,0,0.35);
+    background: linear-gradient(160deg, var(--wine) 0%, var(--wine-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .arch img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .monogram {
+    font-family: var(--display);
+    color: var(--ivory);
+    text-align: center;
+    line-height: 1;
+  }
+  .monogram .initials {
+    font-size: 52px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .monogram .amp {
+    display: block;
+    font-family: var(--accent-script);
+    color: var(--gold-bright);
+    font-size: 30px;
+    margin: 2px 0;
+  }
+
+  .eyebrow {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sage);
+    text-align: center;
+    margin: 24px 0 4px;
+  }
+
+  h1.names {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 38px;
+    line-height: 1.15;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+  h1.names .amp {
+    font-family: var(--accent-script);
+    font-weight: 400;
+    color: var(--wine);
+    font-size: 30px;
+    margin: 0 6px;
+    vertical-align: -2px;
+  }
+
+  .details {
+    text-align: center;
+    margin: 10px 0 26px;
+    font-family: var(--serif-italic);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .details strong { color: var(--wine); font-weight: 500; font-style: normal; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 26px;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .divider span {
+    font-family: var(--body);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  form { display: flex; flex-direction: column; gap: 18px; }
+
+  label {
+    display: block;
+    font-family: var(--body);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 7px;
+  }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    background: var(--ivory-dim);
+    border: 1px solid rgba(176,141,87,0.4);
+    border-radius: 2px;
+    padding: 12px 13px;
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: #fff;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .attend-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .attend-toggle input { display: none; }
+  .attend-toggle label.opt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--serif-italic);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-soft);
+    background: var(--ivory-dim);
+    border: 1px solid rgba(176,141,87,0.4);
+    border-radius: 2px;
+    padding: 13px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .attend-toggle input:checked + label.opt.yes {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--ivory);
+  }
+  .attend-toggle input:checked + label.opt.no {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: var(--ivory);
+  }
+
+  .guest-field {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.35s ease;
+    margin-top: -18px;
+  }
+  .guest-field.show { max-height: 120px; opacity: 1; margin-top: 0; }
+
+  button.submit {
+    margin-top: 8px;
+    background: var(--wine);
+    color: var(--ivory);
+    border: none;
+    border-radius: 2px;
+    padding: 15px;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  button.submit:hover { background: var(--wine-dark); }
+  button.submit:active { transform: scale(0.98); }
+  button.submit:disabled { opacity: 0.6; cursor: default; }
+
+  .error-msg {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--wine);
+    text-align: center;
+    display: none;
+  }
+
+  .thankyou { display: none; text-align: center; padding: 20px 0 4px; }
+  .thankyou.show { display: block; }
+  .thankyou h2 {
+    font-family: var(--accent-script);
+    font-size: 36px;
+    margin: 0 0 10px;
+    color: var(--wine);
+    font-weight: 400;
+  }
+  .thankyou p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  form.hide { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 420px) {
+    .card { padding: 0 26px 34px; }
+    .arch-wrap { padding: 0 14px; }
+    .arch { height: 190px; }
+    h1.names { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="card">
+    <div class="arch-wrap">
+      <div class="arch" id="archFrame">
+        <div class="monogram" id="monogram">
+          <span class="initials" id="initials">A &nbsp; J</span>
+          <span class="amp">&amp;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eyebrow" id="rsvpByLabel"></div>
+    <h1 class="names" id="coupleNames"></h1>
+    <p class="details" id="weddingDetails"></p>
+
+    <div class="divider"><span>Kindly Respond</span></div>
+
+    <form id="rsvpForm">
+      <div>
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" required placeholder="Full name">
+      </div>
+
+      <div>
+        <label>Will You Attend?</label>
+        <div class="attend-toggle">
+          <input type="radio" id="yes" name="attending" value="Joyfully accepts" checked>
+          <label class="opt yes" for="yes">Joyfully accepts</label>
+          <input type="radio" id="no" name="attending" value="Regretfully declines">
+          <label class="opt no" for="no">Regretfully declines</label>
+        </div>
+      </div>
+
+      <div class="guest-field show" id="guestField">
+        <label for="guests">Number Attending (incl. yourself)</label>
+        <input type="number" id="guests" name="guests" min="1" max="10" value="1">
+      </div>
+
+      <div>
+        <label for="message">Message (optional)</label>
+        <textarea id="message" name="message" placeholder="A note for the couple..."></textarea>
+      </div>
+
+      <p class="error-msg" id="errorMsg">Something went wrong — please try again, or message the couple directly.</p>
+
+      <button class="submit" type="submit" id="submitBtn">Send Response</button>
+    </form>
+
+    <div class="thankyou" id="thankyou">
+      <h2>Thank You</h2>
+      <p id="thankyouText"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim().replace(/^"(.*)"$/, '$1');
+  }
+
+  const coupleA = cssVar('--couple-a');
+  const coupleB = cssVar('--couple-b');
+
+  document.getElementById('coupleNames').innerHTML =
+    coupleA + ' <span class="amp">&amp;</span> ' + coupleB;
+
+  document.getElementById('weddingDetails').innerHTML =
+    cssVar('--wedding-date') + '<br>' +
+    cssVar('--wedding-time') + '<br>' +
+    '<strong>' + cssVar('--wedding-venue') + '</strong>';
+
+  document.getElementById('rsvpByLabel').textContent = cssVar('--rsvp-by');
+  document.getElementById('initials').textContent =
+    coupleA.charAt(0).toUpperCase() + '  ' + coupleB.charAt(0).toUpperCase();
+
+  // ---- optional couple photo ----
+  const imageUrl = cssVar('--image-url');
+  if (imageUrl) {
+    const arch = document.getElementById('archFrame');
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = coupleA + ' and ' + coupleB;
+    img.onerror = function () { arch.classList.add('img-failed'); img.remove(); };
+    arch.innerHTML = '';
+    arch.appendChild(img);
+  }
+
+  // ---- toggle guest count field ----
+  const guestField = document.getElementById('guestField');
+  document.querySelectorAll('input[name="attending"]').forEach(r => {
+    r.addEventListener('change', () => {
+      guestField.classList.toggle('show', r.value.startsWith('Joyfully') && r.checked);
+    });
+  });
+
+  // ============================================================
+  // FORM SUBMISSION — Formspree
+  // 1. Go to https://formspree.io and create a free account
+  // 2. Create a new form, copy its endpoint (looks like
+  //    https://formspree.io/f/xxxxabcd)
+  // 3. Paste it below, replacing YOUR_FORM_ID
+  // ============================================================
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xaeyyvya";
+
+  const form = document.getElementById('rsvpForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const thankyou = document.getElementById('thankyou');
+  const thankyouText = document.getElementById('thankyouText');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    const attending = form.attending.value;
+    const data = new FormData(form);
+    data.set('wedding', coupleA + ' & ' + coupleB);
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: data
+      });
+
+      if (res.ok) {
+        form.classList.add('hide');
+        thankyou.classList.add('show');
+        thankyouText.textContent = attending.startsWith('Joyfully')
+          ? "We've noted you're coming — we can't wait to celebrate with you."
+          : "We're sorry you can't make it — you'll be missed on the day.";
+      } else {
+        throw new Error('Request failed');
+      }
+    } catch (err) {
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Response';
+    }
+  });
+</script>
+
+</body>
+</html>
