@@ -329,6 +329,7 @@
   }
   .attend-toggle input { display: none; }
   .attend-toggle label.opt {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -340,9 +341,32 @@
     background: var(--ivory-dim);
     border: 1px solid rgba(176,141,87,0.4);
     border-radius: 2px;
-    padding: 13px 8px;
+    padding: 13px 8px 15px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+  }
+  .attend-toggle label.opt::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    width: 0;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: width 0.2s ease;
+  }
+  .attend-toggle input:checked + label.opt {
+    animation: pop 0.28s ease;
+  }
+  .attend-toggle input:checked + label.opt::after {
+    width: 36px;
+  }
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    45%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
   }
   .attend-toggle input:checked + label.opt.yes {
     background: var(--sage);
@@ -463,16 +487,16 @@
       <div>
         <label>Will You Attend?</label>
         <div class="attend-toggle">
-          <input type="radio" id="yes" name="attending" value="Joyfully accepts" checked>
+          <input type="radio" id="yes" name="attending" value="Joyfully accepts" required>
           <label class="opt yes" for="yes">Joyfully accepts</label>
-          <input type="radio" id="no" name="attending" value="Regretfully declines">
+          <input type="radio" id="no" name="attending" value="Regretfully declines" required>
           <label class="opt no" for="no">Regretfully declines</label>
         </div>
       </div>
 
-      <div class="guest-field show" id="guestField">
+      <div class="guest-field" id="guestField">
         <label for="guests">Number Attending (incl. yourself)</label>
-        <input type="number" id="guests" name="guests" min="1" max="10" value="1">
+        <input type="number" id="guests" name="guests" min="1" max="10" placeholder="e.g. 2">
       </div>
 
       <div>
@@ -567,9 +591,13 @@
 
   // ---- toggle guest count field ----
   const guestField = document.getElementById('guestField');
+  const guestsInput = document.getElementById('guests');
   document.querySelectorAll('input[name="attending"]').forEach(r => {
     r.addEventListener('change', () => {
-      guestField.classList.toggle('show', r.value.startsWith('Joyfully') && r.checked);
+      const isAttending = r.value.startsWith('Joyfully') && r.checked;
+      guestField.classList.toggle('show', isAttending);
+      guestsInput.required = isAttending;
+      if (!isAttending) guestsInput.value = '';
     });
   });
 
